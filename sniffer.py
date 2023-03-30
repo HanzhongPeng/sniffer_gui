@@ -4,6 +4,8 @@ class Sniffer:
     def __init__(self):
         self.packets = []
 
+
+
     def get_nif(self):
         if_list = [nif.name for nif in get_working_ifaces() if nif.mac]
         return if_list
@@ -130,6 +132,26 @@ class Sniffer:
     def clear(self):
         self.packets.clear()
 
+
+    def get_packet_summary(self, packet):
+        return packet.summary()
+    # Scapy Packet 对象有一个内置的方法 summary()，可以返回这个数据包的简要信息，包括源 IP 和目标 IP、协议类型、源端口和目标端口，以及一些其他相关信息。
+
+    def get_packet_payload(self, packet):
+        return packet.payload
+#     从给定的 Scapy Packet 对象中提取出 payload 部分（即有效载荷）。
+#     payload 是指一个 IP 封包中从 IP 头部之后开始的那部分数据，
+#     也就是说，它是一个 IP 封包的正文部分。不同类型的网络协议有不同的 payload 格式，
+#     比如在 TCP 协议中，payload 就是数据流，而在 ICMP 协议中，payload 则可以包含错误信息等等。
+#     在这里，这个方法将被用于提取某个数据包的 payload 部分，以进行进一步的数据分析。
+
+    def get_packet_hexdump(self, packet):
+        return packet.hexdump()
+
+    def get_packet_len(self, packet):
+        return packet.len
+
+
 snif = Sniffer()
 nif_list = snif.get_nif()
 print(nif_list)
@@ -137,9 +159,25 @@ print(nif_list)
 snif.set_nif('以太网')
 snif.set_filter(None)
 snif.start()
-time.sleep(5)
+time.sleep(2)
 snif.stop()
 packets = snif.get_packets()
-analyze_result = snif.parse_packets(packets)
+# analyze_results = snif.parse_packets(packets)
 # snif.print_packets()
-print(analyze_result)
+# print(analyze_results)
+
+# hex_data = packets[0].hexdump()
+#
+# print(hex_data)
+
+packet_hex_data = snif.get_packet_hexdump(packets[0])
+print(packet_hex_data)
+packet_len = snif.get_packet_len(packets[0])
+print(packet_len)
+packet_payload = snif.get_packet_payload(packets[0])
+print(packet_payload)
+packet_summary = snif.get_packet_summary(packets[0])
+print(packet_summary)
+
+# hex_data = packets[0].hexdump()
+# print(hex_data)
