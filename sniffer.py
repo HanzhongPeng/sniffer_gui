@@ -124,7 +124,6 @@ class Sniffer:
         result = []
         for packet in packets:
             result.append(self.parse_packet(packet))
-            result.append("\n\n\n\n")
         return result
 
 
