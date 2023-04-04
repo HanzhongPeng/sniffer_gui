@@ -1,4 +1,12 @@
+import json
+
 from scapy.all import *
+import scapy.utils
+from scapy.layers.dhcp import DHCP
+from scapy.layers.dns import DNS
+from scapy.layers.inet import TCP, ICMP, UDP, IP
+from scapy.layers.inet6 import IPv6
+from scapy.layers.l2 import Ether, ARP
 
 # 创建一个字典来存储捕获到的数据包的详细信息
 packets = []
@@ -151,26 +159,84 @@ def packet_handler(packet):
                     ssh_dict["lang"] = getattr(packet[TCP].payload, 'lang', "N/A")
                     ssh_dict["cookie"] = getattr(packet[TCP].payload, 'cookie', "N/A")
                     packet_dict["SSH"] = ssh_dict
+            if IPv6 in packet:
+                ipv6_dict = {}
+                ipv6_dict["src"] = packet[IPv6].src
+                ipv6_dict["dst"] = packet[IPv6].dst
+                ipv6_dict["version"] = packet[IPv6].version
+                ipv6_dict["traffic_class"] = packet[IPv6].tc
+                ipv6_dict["flow_label"] = packet[IPv6].fl
+                ipv6_dict["next_header"] = packet[IPv6].nh
+                ipv6_dict["hop_limit"] = packet[IPv6].hlim
+                packet_dict["IPv6"] = ipv6_dict
 
-            # # 解析SSL/TLS协议
-            # if TCP in packet and (packet[TCP].dport == 443 or packet[TCP].sport == 443):
-            #     tls_dict = {}
-            #     tls_dict["content_type"] = getattr(packet[TCP].payload, 'content_type', "N/A")
-            #     tls_dict["version"] = getattr(packet[TCP].payload, 'version', "N/A")
-            #     tls_dict["cipher"] = getattr(packet[TCP].payload, 'cipher', "N/A")
+            if ICMP in packet:
+                icmp_dict = {}
+                icmp_dict["type"] = packet[ICMP].type
+                icmp_dict["code"] = packet[ICMP].code
+                icmp_dict["id"] = packet[ICMP].id
+                icmp_dict["seq"] = packet[ICMP].seq
+                packet_dict["ICMP"] = icmp_dict
+
+            packet_dict["Raw_data"] = scapy.utils.hexdump(packet, dump=True)
+
+
+
+            # 解析SSL/TLS协议
+            # 解析 SSL/TLS 协议
+            if TCP in packet and (packet[TCP].dport == 443 or packet[TCP].sport == 443):
+                tls_dict = {}
+                tls_dict["content_type"] = getattr(packet[TCP].payload, 'content_type', "N/A")
+                tls_dict["version"] = getattr(packet[TCP].payload, 'version', "N/A")
+                tls_dict["cipher"] = getattr(packet[TCP].payload, 'cipher', "N/A")
+                packet_dict["SSL/TLS"] = tls_dict
 
     # 将当前捕获的数据包信息存储到列表中
     packets.append(packet_dict)
 
-# 开始监听网络流量
-sniff(iface="WLAN", prn=packet_handler, count=1000)
+def start_sniffing():
+    # 开始监听网络流量
+    sniff(iface="WLAN", prn=packet_handler, count=1000)
+    # show_packet(0)
+    show_packets()
+def save_packets():
+    # 将捕获的数据包信息写入到文件中
+    with open("packets.json", "w") as f:
+        json.dump(packets, f, indent=4)
 
-for packet_number, packet_info in enumerate(packets):
-    print(f"Packet {packet_number + 1}:")
+def show_packet(packet_number):
+    # 显示指定序号的数据包信息
+    packet_info = packets[packet_number]
     for layer_name, layer_info in packet_info.items():
-        print(f"\tLayer: {layer_name}")
+        print(f"Layer: {layer_name}")
         if hasattr(layer_info, 'items'):
             for field_name, field_value in layer_info.items():
-                print(f"\t\t{field_name}: {field_value}")
+                print(f"\t{field_name}: {field_value}")
         else:
-            print(f"\t\t{layer_info}")
+            print(f"\t{layer_info}")
+
+
+
+def show_packets():
+    for packet_number, packet_info in enumerate(packets):
+        print(f"Packet {packet_number + 1}:")
+        for layer_name, layer_info in packet_info.items():
+            print(f"\tLayer: {layer_name}")
+            if hasattr(layer_info, 'items'):
+                for field_name, field_value in layer_info.items():
+                    print(f"\t\t{field_name}: {field_value}")
+            else:
+                print(f"\t\t{layer_info}")
+
+def get_src_and_dst(packet):
+    if packet.haslayer('IP'):
+        src = packet['IP'].src
+        dst = packet['IP'].dst
+    else:
+        src = packet[0].src
+        dst = packet[0].dst
+        if dst == 'ff:ff:ff:ff:ff:ff':
+            dst = 'Broadcast'
+    return src, dst
+
+start_sniffing()
