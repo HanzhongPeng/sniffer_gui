@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSignal, QObject
-from packet_info import PacketInfo
+from packet import PacketInfo
 
 
 class Signals(QObject):

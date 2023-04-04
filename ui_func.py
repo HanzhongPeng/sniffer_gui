@@ -1,6 +1,6 @@
 from scapy.all import *
 from PyQt5.QtWidgets import *
-from packet_info import PacketInfo
+from packet import PacketInfo
 
 import sniffer
 
@@ -16,7 +16,6 @@ s: sniffer.Sniffer
 def modify(_ui: QWidget):
     global ui
     global s
-    global reassembler
     ui = _ui
     s = sniffer.Sniffer(ui)
 
@@ -45,6 +44,7 @@ def initialize():
     ui.stop_button.setEnabled(False)
     ui.stop_button.clicked.connect(stop)
     ui.clear_button.setEnabled(False)
+    ui.clear_button.clicked.connect(clear)
 
 
 # 设置信息展示表格
@@ -112,8 +112,8 @@ def check_nif(index):
 def clear():
     ui.table.clearContents()
     ui.table.setRowCount(0)
-    ui.analyze_data.clear()
-    ui.hex_text.clear()
+    ui.protocal_data_tree.clear()
+    ui.hex_data_text.clear()
     s.clear()
 
 
@@ -176,11 +176,14 @@ def show_protocal_data(item: QTableWidgetItem):
 
     number = int(ui.table.item(row, 0).text()) - 1
     info = s.packets[number].detail_info
+    # print(info)
     for layer, layer_info in info.items():
         root = QTreeWidgetItem(tree)
         root.setText(0, layer)
+        # print(layer_info)
         if layer_info:
             for key, value in layer_info.items():
+                print(key, value)
                 if value is None:
                     value = ''
                 node = QTreeWidgetItem(root)

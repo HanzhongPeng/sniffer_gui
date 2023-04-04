@@ -184,7 +184,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>解析</string>
+           <string>数据</string>
           </property>
          </widget>
         </item>
@@ -195,7 +195,12 @@
          <widget class="QTreeWidget" name="protocal_data_tree">
           <column>
            <property name="text">
-            <string notr="true">1</string>
+            <string notr="true">协议</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>值</string>
            </property>
           </column>
          </widget>
@@ -203,7 +208,7 @@
         <item row="2" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>数据</string>
+           <string>协议解析</string>
           </property>
          </widget>
         </item>
