@@ -19,6 +19,7 @@ def modify(_ui: QWidget):
     ui = _ui
     s = sniffer.Sniffer(ui)
 
+
     # signals = s.signals
     set_table()
 
@@ -45,8 +46,12 @@ def initialize():
     ui.stop_button.clicked.connect(stop)
     ui.clear_button.setEnabled(False)
     ui.clear_button.clicked.connect(clear)
+    ui.filter_button.clicked.connect(set_filter)
 
+def set_filter():
 
+    s.filter = ui.filter_edit.text()
+    # ui.filter_edit.clear()
 # 设置信息展示表格
 def set_table():
     ui.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
@@ -183,7 +188,7 @@ def show_protocal_data(item: QTableWidgetItem):
         # print(layer_info)
         if layer_info:
             for key, value in layer_info.items():
-                print(key, value)
+                # print(key, value)
                 if value is None:
                     value = ''
                 node = QTreeWidgetItem(root)

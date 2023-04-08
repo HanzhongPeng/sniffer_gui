@@ -76,6 +76,8 @@ raw_pattern = r'''###\[ Raw \]###
 padding_pattern = r'''###\[ Padding \]### 
            load      = (.*)'''
 
+http_pattern = r'HTTP/1\.\d\s+(\w+)\s+(.*)\r\n((.*:.*\r\n)*)\r\n(.*)'
+
 
 
 class PacketInfo:
@@ -172,6 +174,12 @@ class PacketInfo:
             self.detail_info['TCP'] = dict.fromkeys(attributes)
             for i, attr in enumerate(attributes):
                 self.detail_info['TCP'][attr] = match.group(i + 1)
+        if 'HTTP' in layers:
+            match = re.search(http_pattern, self.raw_data)
+            attributes = ['method(方法)', 'url(地址)', 'version(版本)', 'headers(头部)', 'body(正文)']
+            self.detail_info['HTTP'] = dict.fromkeys(attributes)
+            for i, attr in enumerate(attributes):
+                self.detail_info['HTTP'][attr] = match.group(i + 1)
         if 'UDP' in layers:
             match = re.search(udp_pattern, self.raw_data)
             attributes = ['sport(源端口)', 'dport(目的端口)', 'len(长度)', 'chksum(校验和)']
