@@ -118,15 +118,27 @@ class PacketInfo:
 
     def get_color(self):
         if self.protocol == 'TCP':
-            self.color = QColor('#E7E6FF')
+            self.color = QColor('#FFC947')  # yellow
         elif self.protocol == 'UDP' or self.protocol == 'DNS':
-            self.color = QColor('#DAEEFF')
+            self.color = QColor('#00BFFF')  # blue
         elif self.protocol == 'ICMP':
-            self.color = QColor('#FCE0FF')
+            self.color = QColor('#FF5733')  # orange
         elif self.protocol == 'ARP':
-            self.color = QColor('#FAF0D7')
+            self.color = QColor('#00FF00')  # green
+        elif self.protocol == 'IPv6':
+            self.color = QColor('#FF0000')  # red
+        elif self.protocol == 'ICMPv6':
+            self.color = QColor('#FF00FF')  # purple
+        elif self.protocol == 'IPv6ExtHdrHopByHop/IPv6ExtHdrHopByHop':
+            self.color = QColor('#FF11FF')
+        elif self.protocol == 'Raw/Raw':
+            self.color = QColor('#0022FF')
+        elif self.protocol == 'DHCP6OptOptReq':
+            self.color = QColor('#0033FF')
+        elif self.protocol == 'LLMNRQuery':
+            self.color = QColor('#0044FF')
         else:
-            self.color = QColor('#FFFFFF')
+            self.color = QColor('#FFFFFF')  # white
 
     def get_detail(self):
         # print(self.raw_data)
