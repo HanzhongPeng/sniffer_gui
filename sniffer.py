@@ -44,7 +44,7 @@ class Sniffer:
 
     def get_protocol(self):
         protocol_list = self.current_packet.summary().split('/')
-        print(protocol_list)
+        # print(protocol_list)
         arp_protocol_list = ['ARP', 'RARP', 'DHCP']
         # arp protocol_list:  ['Ether ', ' ARP who has 192.168.31.1 says 192.168.31.253']
         for protocol in arp_protocol_list:
@@ -62,8 +62,6 @@ class Sniffer:
         elif 'IPv6' in protocol_list[1]:
             return 'IPv6/' + protocol_list[2].strip().split(' ')[0]
         # DNS and others
-        elif 'HTTP' in protocol_list[1]:
-            return 'HTTP'
         else:
             if len(protocol_list)>3:
                 protocol = protocol_list[2].strip().split(' ')[0]

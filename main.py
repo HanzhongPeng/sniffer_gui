@@ -13,7 +13,6 @@ class Loader:
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-
     loader = Loader()
     loader.ui.showMaximized()
     sys.exit(app.exec_())

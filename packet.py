@@ -149,43 +149,49 @@ class PacketInfo:
         self.detail_info = self.detail_info.fromkeys(layers)
         if 'Ethernet' in layers:
             match = re.search(ethernet_pattern, self.raw_data)
-            self.detail_info['Ethernet'] = {'dst(目的地址)': match.group(1),
-                                            'src(源地址)': match.group(2),
-                                            'type(类型)': match.group(3)}
+            if match is not None:
+                self.detail_info['Ethernet'] = {'dst(目的地址)': match.group(1),
+                                                'src(源地址)': match.group(2),
+                                                'type(类型)': match.group(3)}
         if 'IP' in layers:
             match = re.search(ip_pattern, self.raw_data)
             attributes = ['version(版本)', 'ihl(报头长度)', 'tos(服务类型)', 'len(总长度)', 'id(标识)', 'flags(分段标志)',
                           'frag(段偏移)', 'ttl(生存期)', 'proto(协议)', 'chksum(校验和)', 'src(源地址)', 'dst(目的地址)']
             self.detail_info['IP'] = dict.fromkeys(attributes)
-            for i, attr in enumerate(attributes):
-                self.detail_info['IP'][attr] = match.group(i + 1)
+            if match is not None:
+                for i, attr in enumerate(attributes):
+                    self.detail_info['IP'][attr] = match.group(i + 1)
         if 'IPv6' in layers:
             match = re.search(ipv6_pattern, self.raw_data)
             attributes = ['vsersion(版本)', 'tc(流量分类)', 'fl(流标签)', 'plen(有效载荷长度)', 'nh(下一个头类型)',
                           'hlim(最大跳数)', 'src(源地址)', 'dst(目的地址)']
             self.detail_info['IPv6'] = dict.fromkeys(attributes)
-            for i, attr in enumerate(attributes):
-                self.detail_info['IPv6'][attr] = match.group(i + 1)
+            if match is not None:
+                for i, attr in enumerate(attributes):
+                    self.detail_info['IPv6'][attr] = match.group(i + 1)
         if 'TCP' in layers:
             match = re.search(tcp_pattern, self.raw_data)
             attributes = ['sport(源端口)', 'dport(目的端口)', 'seq(序号)', 'ack(确认号)', 'dataofs(数据偏移)',
                           'reserved(保留位)', 'flags(标志位)', 'window(窗口大小)', 'chksum(校验和)', 'urgptr(紧急指针)',
                           'options(选项)']
             self.detail_info['TCP'] = dict.fromkeys(attributes)
-            for i, attr in enumerate(attributes):
-                self.detail_info['TCP'][attr] = match.group(i + 1)
-        if 'HTTP' in layers:
-            match = re.search(http_pattern, self.raw_data)
-            attributes = ['method(方法)', 'url(地址)', 'version(版本)', 'headers(头部)', 'body(正文)']
-            self.detail_info['HTTP'] = dict.fromkeys(attributes)
-            for i, attr in enumerate(attributes):
-                self.detail_info['HTTP'][attr] = match.group(i + 1)
+            if match is not None:
+                for i, attr in enumerate(attributes):
+                    self.detail_info['TCP'][attr] = match.group(i + 1)
+        # if 'HTTP' in layers:
+        #     match = re.search(http_pattern, self.raw_data)
+        #     attributes = ['method(方法)', 'url(地址)', 'version(版本)', 'headers(头部)', 'body(正文)']
+        #     self.detail_info['HTTP'] = dict.fromkeys(attributes)
+        #     if match is not None:
+        #         for i, attr in enumerate(attributes):
+        #             self.detail_info['HTTP'][attr] = match.group(i + 1)
         if 'UDP' in layers:
             match = re.search(udp_pattern, self.raw_data)
             attributes = ['sport(源端口)', 'dport(目的端口)', 'len(长度)', 'chksum(校验和)']
             self.detail_info['UDP'] = dict.fromkeys(attributes)
-            for i, attr in enumerate(attributes):
-                self.detail_info['UDP'][attr] = match.group(i + 1)
+            if match is not None:
+                for i, attr in enumerate(attributes):
+                    self.detail_info['UDP'][attr] = match.group(i + 1)
         if 'ARP' in layers:
             match = re.search(arp_pattern, self.raw_data)
             # print(self.raw_data)
@@ -194,14 +200,16 @@ class PacketInfo:
                           'hwsrc(源MAC地址)', 'psrc(源IP地址)', 'hwdst(目的MAC地址)', 'pdst(目的IP地址)']
             self.detail_info['ARP'] = dict.fromkeys(attributes)
             # print(self.detail_info['ARP'])
-            for i, attr in enumerate(attributes):
-                self.detail_info['ARP'][attr] = match.group(i + 1)
+            if match is not None:
+                for i, attr in enumerate(attributes):
+                    self.detail_info['ARP'][attr] = match.group(i + 1)
         if 'ICMP' in layers:
             match = re.search(icmp_pattern, self.raw_data)
             attributes = ['type(类型)', 'code(代码)', 'chksum(校验和)', 'id(标识)', 'seq(序号)', 'unused(未使用)']
             self.detail_info['ICMP'] = dict.fromkeys(attributes)
-            for i, attr in enumerate(attributes):
-                self.detail_info['ICMP'][attr] = match.group(i + 1)
+            if match is not None:
+                for i, attr in enumerate(attributes):
+                    self.detail_info['ICMP'][attr] = match.group(i + 1)
         if 'Raw' in layers:
             match = re.search(raw_pattern, self.raw_data)
             self.detail_info['Raw'] = {}
